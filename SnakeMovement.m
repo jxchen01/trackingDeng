@@ -22,8 +22,11 @@ for i=1:1:numContour
         ty=round(pts(:,2));
         ty(ty<1)=1; ty(ty>sz(2))=sz(2);
         idx=sub2ind(sz,tx,ty);
+        try
         allPoints(idx)=1;
-        
+        catch 
+            keyboard
+        end
 %        tmp(idx)=i;
     
         pIdx{i}=idx;
@@ -32,7 +35,7 @@ for i=1:1:numContour
     end
 end
 
-for i=1:numContour
+parfor i=1:numContour
     if(~Ps{i}.valid)
         continue;
     end

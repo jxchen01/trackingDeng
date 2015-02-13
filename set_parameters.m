@@ -9,12 +9,12 @@ Options.gamma=1;
 Options.w0=5;
 
 Options.nPoints=25;
-Options.lengthCanSkip=15;
+Options.lengthCanSkip=20;
 Options.shrinkRate=0.3;
 
 Options.Iteration=15;
 
-Options.Verbose=flase;
+Options.Verbose=false;
 
 if(sq==1)
     Options.bIdx=1;
