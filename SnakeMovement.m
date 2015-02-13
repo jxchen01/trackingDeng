@@ -10,6 +10,8 @@ Wrepel=Options.Wrepel;
 Wstr=Options.Wstr;
 gamma=Options.gamma;
 
+%tmp=zeros(sz);
+
 for i=1:1:numContour
     if(Ps{i}.valid)
         pts=Ps{i}.pts;
@@ -21,6 +23,8 @@ for i=1:1:numContour
         ty(ty<1)=1; ty(ty>sz(2))=sz(2);
         idx=sub2ind(sz,tx,ty);
         allPoints(idx)=1;
+        
+%        tmp(idx)=i;
     
         pIdx{i}=idx;
     else
@@ -28,7 +32,7 @@ for i=1:1:numContour
     end
 end
 
-parfor i=1:numContour
+for i=1:numContour
     if(~Ps{i}.valid)
         continue;
     end

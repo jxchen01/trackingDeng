@@ -10,8 +10,9 @@ disp('Program Starts...');
 
 %parpool('local',2);
 
-sq=21;
-fpath='C:\Users\jchen16\Dropbox\Private\miccai2015\';
+sq=1;
+fpath = '/Users/JianxuChen/Dropbox/Private/miccai2015/';
+%fpath='C:\Users\jchen16\Dropbox\Private\miccai2015\';
 %fpath='/afs/crc.nd.edu/user/d/dlv1/Private/miccai2015/data/';
 
 Options= set_parameters(sq);
@@ -24,7 +25,7 @@ cMap=rand(1000,3);
 cMap(1,:)=[0,0,0];
 
 %%%% load initial position %%
-ctl = im2bw(imread([fpath,'sq',num2str(sq),'\ctl.png']));
+ctl = im2bw(imread([fpath,'sq',num2str(sq),'/ctl.png']));
 Ps=ExtractCells(ctl, Options);
 
 [xdim,ydim]=size(ctl);
@@ -36,15 +37,15 @@ for frameIdx=2:1:numFrame
     disp(['frame: ',num2str(frameIdx)]);
 
     %%%% load raw image %%%%%
-    I=mat2gray(imread([fpath,'sq',num2str(sq),'\raw\img0',num2str(100+frameIdx),'.png']));
+    I=mat2gray(imread([fpath,'sq',num2str(sq),'/raw/img0',num2str(100+frameIdx),'.png']));
     
     % Compute Image Force
     [EImg, clusterVec] = imageEnhancement(I,clusterVec,Options);
     m=max(EImg(:));
-    for bb=0:1:5
-        EImg(6-bb,:)=m+bb*0.2; EImg(:,6-bb)=m+bb*0.2;
-        EImg(end-5+bb,:)=m+bb*0.2; EImg(:,end-5+bb)=m+bb*0.2;
-    end
+%     for bb=0:1:5
+%         EImg(6-bb,:)=m+bb*0.2; EImg(:,6-bb)=m+bb*0.2;
+%         EImg(end-5+bb,:)=m+bb*0.2; EImg(:,end-5+bb)=m+bb*0.2;
+%     end
     [dEx, dEy]=EnergyGradient(EImg,1.5,0);
     
     if(Options.Verbose)
@@ -59,7 +60,7 @@ for frameIdx=2:1:numFrame
         Ps = ContourResample(Ps,size(I),Options.nPoints);
     end
     
-    save([fpath,'sq',num2str(sq),'\track_data_princeton\track0',num2str(frameIdx+100),'.mat'],'Ps');
+    save([fpath,'sq',num2str(sq),'/track_data_princeton/track0',num2str(frameIdx+100),'.mat'],'Ps');
 
     flag=false;
     for i=1:1:numel(Ps)
