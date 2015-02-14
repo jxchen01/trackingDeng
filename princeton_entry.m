@@ -44,11 +44,11 @@ for frameIdx=2:1:numFrame
     
     % Compute Image Force
     [EImg, clusterVec] = imageEnhancement(I,clusterVec,Options);
-    m=max(EImg(:));
-     for bb=4:1:5
-         EImg(6-bb,:)=m+bb*0.2; EImg(:,6-bb)=m+bb*0.2;
-         EImg(end-5+bb,:)=m+bb*0.2; EImg(:,end-5+bb)=m+bb*0.2;
-     end
+%     m=max(EImg(:));
+%     for bb=5:1:5
+%         EImg(6-bb,:)=m+bb*0.2; EImg(:,6-bb)=m+bb*0.2;
+%         EImg(end-5+bb,:)=m+bb*0.2; EImg(:,end-5+bb)=m+bb*0.2;
+%     end
     [dEx, dEy]=EnergyGradient(EImg,1.5,0);
     
     if(Options.Verbose)
@@ -62,13 +62,22 @@ for frameIdx=2:1:numFrame
             h=drawContours(Ps,i/Options.Iteration,h,i);
         end
         for pp=1:1:numel(Ps)
-            pts=Ps{pp}.pts;
-            pts = round(pts);
-            pts(pts(:,1)<1, 1)=1; pts(pts(:,1)>xdim,1)=xdim;
-            pts(pts(:,2)<1, 2)=1; pts(pts(:,2)>ydim,2)=ydim;
-            pts_idx = sub2ind([xdim,ydim],pts(:,1), pts(:,2));
-            if(mean(I(pts_idx))<checkValue)
-                Ps{pp}.valid = false;
+            if(Ps{pp}.valid)
+                pts=Ps{pp}.pts;
+                pts = round(pts);
+                pts(pts(:,1)<1, 1)=1; pts(pts(:,1)>xdim,1)=xdim;
+                pts(pts(:,2)<1, 2)=1; pts(pts(:,2)>ydim,2)=ydim;
+                pts_idx = sub2ind([xdim,ydim],pts(:,1), pts(:,2));
+                
+                if(mean(I(pts_idx))<checkValue)
+                    Ps{pp}.valid = false;
+                    continue;
+                end
+                
+                if(~any(pts(:,1)>6)  || ~any(pts(:,1)<xdim-5) || ~any(pts(:,2)>6) || ~any(pts(:,2)<ydim-5))
+                    Ps{pp}.valid = false;
+                end
+                
             end
         end
         Ps = ContourResample(Ps,size(I),Options.nPoints);
@@ -88,12 +97,8 @@ for frameIdx=2:1:numFrame
         break;
     end
 
-
- %   drawColorRegions(Ps, [xdim,ydim], frameIdx ,cMap);
+  %  drawColorRegions(Ps, [xdim,ydim], frameIdx ,cMap);
  %   saveas(gcf,[fpath,'sq',num2str(sq),'\Princeton_track\img0',num2str(frameIdx+100),'.png'],'png');
-    
-    % cellFrameTracked=cellFrame{1};
-    % save([fpath,'sq',num2str(sq),'/track_data/seg0',num2str(100+frameIdx),'.mat'],'cellFrameTracked');
     
     Ps = contourPropagate(Ps,[xdim,ydim],Options);
     

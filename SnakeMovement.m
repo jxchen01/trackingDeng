@@ -13,6 +13,7 @@ gamma=Options.gamma;
 %tmp=zeros(sz);
 
 for i=1:1:numContour
+  
     if(Ps{i}.valid)
         pts=Ps{i}.pts;
     
@@ -22,11 +23,8 @@ for i=1:1:numContour
         ty=round(pts(:,2));
         ty(ty<1)=1; ty(ty>sz(2))=sz(2);
         idx=sub2ind(sz,tx,ty);
-        try
         allPoints(idx)=1;
-        catch 
-            keyboard
-        end
+
 %        tmp(idx)=i;
     
         pIdx{i}=idx;
@@ -35,7 +33,7 @@ for i=1:1:numContour
     end
 end
 
-parfor i=1:numContour
+for i=1:numContour
     if(~Ps{i}.valid)
         continue;
     end
@@ -51,7 +49,7 @@ parfor i=1:numContour
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     dpEx = interp2(dEx,pts(:,2),pts(:,1));
     dpEy = interp2(dEy,pts(:,2),pts(:,1));
-    dpNorm = hypot(dpEx,dpEy);
+    dpNorm = hypot(dpEx,dpEy)+1e-8;
     dpEx=dpEx./dpNorm;
     dpEy=dpEy./dpNorm;
     ds = cat(2, -dpEx, -dpEy);
@@ -83,11 +81,11 @@ parfor i=1:numContour
     Fhead = abs(dot(ds(1,:),tv(1,:)));
     Ftail = abs(dot(ds(end,:), tv(end,:)));
     % head
-    dL_head = dL * Ftail/(Fhead+Ftail);
+    dL_head = dL * Ftail/(Fhead+Ftail+1e-5);
     p0 = pts(1,:) + tv(1,:).*dL_head; % anticipated position
     ds(1,:) = ds(1,:) + Wstr*(p0-pts(1,:)); % -(pts(1,:)-p0)
     % tail
-    dL_tail = dL * Fhead/(Fhead+Ftail);
+    dL_tail = dL * Fhead/(Fhead+Ftail+1e-5);
     q0 = pts(end,:) - tv(end,:).*dL_tail;% in the reverse direction
     ds(end,:) = ds(end,:) + Wstr*(q0-pts(end,:)); % -(pts(end,:)-q0)
     
