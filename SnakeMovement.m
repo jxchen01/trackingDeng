@@ -25,7 +25,7 @@ for i=1:1:numContour
         idx=sub2ind(sz,tx,ty);
         allPoints(idx)=1;
 
-%        tmp(idx)=i;
+       % tmp(idx)=i;
     
         pIdx{i}=idx;
     else
@@ -33,11 +33,11 @@ for i=1:1:numContour
     end
 end
 
-for i=1:numContour
+parfor i=1:numContour
     if(~Ps{i}.valid)
         continue;
     end
-    
+     
     pts=Ps{i}.pts;
     idx=pIdx{i};
     

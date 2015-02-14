@@ -12,7 +12,7 @@
 
 %parpool('local',2);
 
-sq=1;
+sq=21;
 %fpath = '/Users/JianxuChen/Dropbox/Private/miccai2015/';
 fpath='C:\Users\jchen16\Dropbox\Private\miccai2015\';
 %fpath='/afs/crc.nd.edu/user/d/dlv1/Private/miccai2015/data/';
@@ -55,7 +55,7 @@ for frameIdx=2:1:numFrame
         figure(2), imshow(mat2gray(EImg)), hold on; h=drawContours(Ps,0,[],0);
     end
     
-    checkValue = graythresh(smooth(I));
+    checkValue = 0.8*graythresh(smooth(I));
     for i=1:1:Options.Iteration
         Ps = SnakeMovement(Ps,B,dEx,dEy,Options);
         if(Options.Verbose)
@@ -64,6 +64,12 @@ for frameIdx=2:1:numFrame
         for pp=1:1:numel(Ps)
             if(Ps{pp}.valid)
                 pts=Ps{pp}.pts;
+                
+                if(isCloseToBoundary(pts,xdim,ydim))
+                    Ps{pp}.valid = false;
+                    continue;
+                end
+                
                 pts = round(pts);
                 pts(pts(:,1)<1, 1)=1; pts(pts(:,1)>xdim,1)=xdim;
                 pts(pts(:,2)<1, 2)=1; pts(pts(:,2)>ydim,2)=ydim;
@@ -76,6 +82,7 @@ for frameIdx=2:1:numFrame
                 
                 if(~any(pts(:,1)>6)  || ~any(pts(:,1)<xdim-5) || ~any(pts(:,2)>6) || ~any(pts(:,2)<ydim-5))
                     Ps{pp}.valid = false;
+                    continue;
                 end
                 
             end

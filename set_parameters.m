@@ -2,19 +2,23 @@ function Options=set_parameters(sq)
 
 Options=struct();
 Options.Wstr=3; 
-Options.Wrepel=3;
-Options.alpha=0.75;
+Options.Wrepel=10;
+Options.alpha=1;
 Options.beta=0;
 Options.gamma=1;
-Options.w0=5;
+Options.w0=10;
 
 Options.nPoints=25;
 Options.lengthCanSkip=20;
 Options.shrinkRate=0.3;
 
-Options.Iteration=15;
-
 Options.Verbose=false;
+
+if(sq>10)
+    Options.Iteration=40;
+else
+    Options.Iteration=15;
+end
 
 if(sq==1)
     Options.bIdx=1;
