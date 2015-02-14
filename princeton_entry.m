@@ -55,10 +55,21 @@ for frameIdx=2:1:numFrame
         figure(2), imshow(mat2gray(EImg)), hold on; h=drawContours(Ps,0,[],0);
     end
     
+    checkValue = graythresh(smooth(I));
     for i=1:1:Options.Iteration
         Ps = SnakeMovement(Ps,B,dEx,dEy,Options);
         if(Options.Verbose)
             h=drawContours(Ps,i/Options.Iteration,h,i);
+        end
+        for pp=1:1:numel(Ps)
+            pts=Ps{pp}.pts;
+            pts = round(pts);
+            pts(pts(:,1)<1, 1)=1; pts(pts(:,1)>xdim,1)=xdim;
+            pts(pts(:,2)<1, 2)=1; pts(pts(:,2)>ydim,2)=ydim;
+            pts_idx = sub2ind([xdim,ydim],pts(:,1), pts(:,2));
+            if(mean(I(pts_idx))<checkValue)
+                Ps{pp}.valid = false;
+            end
         end
         Ps = ContourResample(Ps,size(I),Options.nPoints);
     end
